@@ -1,0 +1,4 @@
+'!include': 'shared/common.yaml'
+outputDir: libs/typescript
+generatorName: typescript
+npmName: '@cale-app/sdk'

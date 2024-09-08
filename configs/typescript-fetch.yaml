@@ -1,0 +1,6 @@
+'!include': 'shared/common.yaml'
+outputDir: libs/typescript-fetch
+generatorName: typescript-fetch
+npmName: '@cale-app/sdk'
+npmVersion: 1.0.2
+supportsES6: true

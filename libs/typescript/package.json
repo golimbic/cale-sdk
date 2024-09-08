@@ -1,6 +1,6 @@
 {
   "name": "@cale-app/sdk",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "OpenAPI client for @cale-app/sdk",
   "author": "OpenAPI-Generator Contributors",
   "repository": {
@@ -15,10 +15,11 @@
   ],
   "license": "Unlicense",
   "main": "./dist/index.js",
-  "type": "commonjs",
+  "type": "module",
+  "module": "./dist/index.js",
   "exports": {
     ".": {
-      "require": "./dist/index.js",
+      "import": "./dist/index.js",
       "types": "./dist/index.d.js"
     }
   },

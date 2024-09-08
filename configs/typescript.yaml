@@ -2,3 +2,4 @@
 outputDir: libs/typescript
 generatorName: typescript
 npmName: '@cale-app/sdk'
+supportsES6: true

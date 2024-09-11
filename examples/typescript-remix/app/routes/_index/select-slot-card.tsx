@@ -15,9 +15,12 @@ import { useForm, useInputControl } from "@conform-to/react";
 import { parseWithZod } from "@conform-to/zod";
 import { SlotsPayload } from "@cale-app/sdk";
 import { Calendar } from "~/components/ui/calendar";
+import { add } from "date-fns";
 
-const schema = z.object({
-  time: z.date({ message: "Please select a time slot" }),
+export const schema = z.object({
+  offerId: z.string(),
+  start: z.date({ message: "Please select a time slot" }),
+  end: z.date(),
 });
 
 export default function SelectOfferCard({ data }: { data: SlotsPayload }) {
@@ -28,7 +31,7 @@ export default function SelectOfferCard({ data }: { data: SlotsPayload }) {
     shouldValidate: "onBlur",
     shouldRevalidate: "onInput",
   });
-  const time = useInputControl(fields.time);
+  const time = useInputControl(fields.start);
   const defaultMonth = data.slots[0]?.start;
   const [searchParams, setSearchParams] = useSearchParams({
     date: defaultMonth?.toISOString(),
@@ -42,6 +45,9 @@ export default function SelectOfferCard({ data }: { data: SlotsPayload }) {
       return prev;
     });
   };
+  const endValue = time.value
+    ? add(time.value, { minutes: data.duration }).toISOString()
+    : "";
 
   return (
     <Card className="mt-10">
@@ -51,6 +57,7 @@ export default function SelectOfferCard({ data }: { data: SlotsPayload }) {
       </CardHeader>
       <Form method="post" id={form.id} onSubmit={form.onSubmit} noValidate>
         <input type="hidden" name="offerId" defaultValue={data.offer} />
+        <input type="hidden" name="end" defaultValue={endValue} />
         <CardContent>
           <div className="flex flex-col items-center justify-center">
             <Calendar
@@ -66,8 +73,8 @@ export default function SelectOfferCard({ data }: { data: SlotsPayload }) {
               </div>
             )}
             <RadioGroup
-              name={fields.time.name}
-              defaultValue={fields.time.initialValue}
+              name={fields.start.name}
+              defaultValue={fields.start.initialValue}
               value={time.value}
               onValueChange={time.change}
               onFocus={time.focus}
@@ -86,15 +93,15 @@ export default function SelectOfferCard({ data }: { data: SlotsPayload }) {
                 </Label>
               ))}
             </RadioGroup>
-            <div>{fields.time.errors}</div>
+            <div>{fields.start.errors}</div>
           </div>
         </CardContent>
 
         <CardFooter>
           <Button className="w-full" type="submit">
             Reserve{" "}
-            {form.value?.time
-              ? new Date(form.value?.time).toLocaleString("en-US", {
+            {form.value?.start
+              ? new Date(form.value?.start).toLocaleString("en-US", {
                   timeStyle: "short",
                   dateStyle: "short",
                 })

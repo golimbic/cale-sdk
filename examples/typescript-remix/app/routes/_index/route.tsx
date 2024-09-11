@@ -4,13 +4,16 @@ import {
   LoaderFunctionArgs,
   type MetaFunction,
 } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { redirect, useLoaderData } from "@remix-run/react";
 import { api } from "~/api.server";
 import SelectServiceCard from "./select-service-card";
 import SelectOfferCard from "./select-offer-card";
-import SelectSlotCard from "./select-slot-card";
+import SelectSlotCard, {
+  schema as reservationSchema,
+} from "./select-slot-card";
 import { Slot, SlotsPayloadFromJSON } from "@cale-app/sdk";
 import { add, endOfDay, startOfDay } from "date-fns";
+import { parseWithZod } from "@conform-to/zod";
 
 export const meta: MetaFunction = () => {
   return [
@@ -82,17 +85,29 @@ export async function loader({ request }: LoaderFunctionArgs) {
   } as const);
 }
 
-export async function action({ request }: ActionFunctionArgs) {}
+export async function action({ request }: ActionFunctionArgs) {
+  const formData = await request.formData();
+  const submission = parseWithZod(formData, { schema: reservationSchema });
+  if (submission.status !== "success") {
+    return submission.reply();
+  }
+  const reservation = await api.reservations.createReservation({
+    createChangeset: {
+      offerId: submission.value.offerId,
+      slot: {
+        start: submission.value.start,
+        end: submission.value.end,
+      },
+    },
+  });
+  return redirect(`/reservations/${reservation.id}`);
+}
 
 export default function Index() {
   const data = useLoaderData<typeof loader>();
 
   return (
-    <main className="max-w-sm mx-auto">
-      <header>
-        <h1>Cale Salon</h1>
-        <small>Cale TypeScript SDK example</small>
-      </header>
+    <>
       {data.step === Step.Service && (
         <SelectServiceCard services={data.services} />
       )}
@@ -100,6 +115,6 @@ export default function Index() {
       {data.step === Step.Slot && (
         <SelectSlotCard data={SlotsPayloadFromJSON(data.slots)} />
       )}
-    </main>
+    </>
   );
 }

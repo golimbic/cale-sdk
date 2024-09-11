@@ -6,6 +6,7 @@ import {
   ScrollRestoration,
 } from "@remix-run/react";
 import "./tailwind.css";
+import { Scissors } from "lucide-react";
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -17,7 +18,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        {children}
+        <main className="max-w-sm mx-auto py-8">
+          <header className="mb-8 text-stone-600">
+            <h1 className="text-lg flex gap-2"><Scissors /><span>Cale Salon</span></h1>
+            <small>Cale TypeScript SDK example</small>
+          </header>
+          {children}
+        </main>
         <ScrollRestoration />
         <Scripts />
       </body>

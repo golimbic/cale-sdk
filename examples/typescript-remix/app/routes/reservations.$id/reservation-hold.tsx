@@ -1,16 +1,8 @@
+import { Reservation } from "@cale-app/sdk";
 import { Label } from "@radix-ui/react-label";
-import { ActionFunctionArgs, json, LoaderFunctionArgs } from "@remix-run/node";
-import {
-  Form,
-  Link,
-  redirect,
-  useFormAction,
-  useLoaderData,
-  useSubmit,
-} from "@remix-run/react";
-import { add, formatDistanceToNow } from "date-fns";
+import { Form, Link, useSubmit } from "@remix-run/react";
+import { formatDistanceToNow } from "date-fns";
 import { useEffect, useState } from "react";
-import { api } from "~/api.server";
 import { Button } from "~/components/ui/button";
 import {
   Card,
@@ -22,65 +14,10 @@ import {
 import { Input } from "~/components/ui/input";
 import { formatPrice } from "~/lib/utils";
 
-export async function loader({ params }: LoaderFunctionArgs) {
-  const id = params.id;
-  if (!id) {
-    throw new Response(null, {
-      status: 400,
-      statusText: "Bad Request",
-    });
-  }
-  const reservation = await api.reservations.getReservation({ id });
-  if (!reservation || reservation.status === "cancelled") {
-    throw new Response(null, {
-      status: 404,
-      statusText: "Not Found",
-    });
-  }
-  const releasedAt = add(reservation.createdAt, { minutes: 10 });
-  const isExpired = new Date() > releasedAt;
-  if (isExpired) {
-    api.reservations.updateReservation({
-      id,
-      reservationUpdateChangeset: { status: "cancelled" },
-    });
-    throw new Response(null, {
-      status: 410,
-      statusText: "Gone",
-    });
-  }
-  return json({ reservation, releasedAt });
-}
-
-export async function action({ request, params }: ActionFunctionArgs) {
-  if (request.method === "delete") {
-    // cancel reservation
-    return redirect("/");
-  }
-  // confirm reservation
-  const id = params.id;
-  if (!id) {
-    throw new Response(null, {
-      status: 400,
-      statusText: "Bad Request",
-    });
-  }
-    // TODO: create customer
-  const customer = await api.customers.createCustomer({
-    customerChangeset: {},
-  });
-  await api.reservations.updateReservation({
-    id,
-    reservationUpdateChangeset: {
-      customerId: customer.id,
-      status: "confirmed",
-    },
-  });
-  return json({ success: true });
-}
-
-export default function Reservation() {
-  const data = useLoaderData<typeof loader>();
+export default function ReservationHold(data: {
+  reservation: Reservation;
+  releasedAt: string;
+}) {
   const [expired, setExpired] = useState(
     new Date() > new Date(data.releasedAt)
   );

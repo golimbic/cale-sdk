@@ -11,7 +11,7 @@ import SelectOfferCard from "./select-offer-card";
 import SelectSlotCard, {
   schema as reservationSchema,
 } from "./select-slot-card";
-import { Slot, SlotsPayloadFromJSON } from "@cale-app/sdk";
+import { Slot, SlotsPayloadFromJSON, SlotsPayloadToJSON } from "@cale-app/sdk";
 import { add, endOfDay, startOfDay } from "date-fns";
 import { parseWithZod } from "@conform-to/zod";
 
@@ -81,7 +81,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
   return json({
     step: Step.Slot,
     offer,
-    slots: { ...data, slots: data.slots.filter(filterSlot) },
+    slots: SlotsPayloadToJSON({
+      ...data,
+      slots: data.slots.filter(filterSlot),
+    }),
   } as const);
 }
 

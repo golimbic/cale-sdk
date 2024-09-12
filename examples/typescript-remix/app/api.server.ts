@@ -7,4 +7,5 @@ export const api = {
   offers: new cale.OffersApi(config),
   reservations: new cale.ReservationsApi(config),
   customers: new cale.CustomersApi(config),
+  providers: new cale.ProvidersApi(config),
 };

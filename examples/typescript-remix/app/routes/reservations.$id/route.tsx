@@ -60,11 +60,6 @@ const customerSchema = z.object({
 });
 
 export async function action({ request, params }: ActionFunctionArgs) {
-  if (request.method === "delete") {
-    // cancel reservation
-    return redirect("/");
-  }
-  // confirm reservation
   const id = params.id;
   if (!id) {
     throw new Response(null, {
@@ -72,6 +67,17 @@ export async function action({ request, params }: ActionFunctionArgs) {
       statusText: "Bad Request",
     });
   }
+
+  // cancel reservation
+  if (request.method === "DELETE") {
+    api.reservations.updateReservation({
+      id,
+      reservationUpdateChangeset: { status: "cancelled" },
+    });
+    return redirect("/");
+  }
+
+  // confirm reservation
   const formData = await request.formData();
   const submission = parseWithZod(formData, { schema: customerSchema });
   if (submission.status !== "success") {

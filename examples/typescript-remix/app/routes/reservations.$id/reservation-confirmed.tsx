@@ -1,9 +1,12 @@
 import { Reservation } from "@cale-app/sdk";
-import { Label } from "@radix-ui/react-label";
+import { Form, Link } from "@remix-run/react";
+import { CalendarArrowDown } from "lucide-react";
+import { Button } from "~/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
@@ -45,6 +48,19 @@ export default function ReservationConfirmed(props: {
           </div>
         </div>
       </CardContent>
+      <CardFooter className="flex gap-2">
+        <Button variant="secondary" asChild>
+          <Link to="calendar.ics" reloadDocument download="cale.ics">
+            <CalendarArrowDown className="mr-2" />
+            iCal event
+          </Link>
+        </Button>
+        <Form method="delete">
+          <Button variant="ghost" type="submit">
+            Cancel reservation
+          </Button>
+        </Form>
+      </CardFooter>
     </Card>
   );
 }

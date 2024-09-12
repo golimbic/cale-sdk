@@ -20,6 +20,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
       statusText: "Bad Request",
     });
   }
+
   const reservation = await api.reservations.getReservation({ id });
   if (!reservation || reservation.status === "cancelled") {
     throw new Response(null, {
@@ -27,9 +28,18 @@ export async function loader({ params }: LoaderFunctionArgs) {
       statusText: "Not Found",
     });
   }
+
+  if (reservation.status === "confirmed" && reservation.endTime < new Date()) {
+    throw new Response(null, {
+      status: 410,
+      statusText: "Gone",
+    });
+  }
+
   const releasedAt = add(reservation.createdAt, { minutes: 10 });
-  const isExpired = new Date() > releasedAt;
-  if (isExpired) {
+  const isHoldExpired =
+    reservation.status === "hold" && new Date() > releasedAt;
+  if (isHoldExpired) {
     api.reservations.updateReservation({
       id,
       reservationUpdateChangeset: { status: "cancelled" },
@@ -39,6 +49,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
       statusText: "Gone",
     });
   }
+
   return json({ reservation: ReservationToJSON(reservation), releasedAt });
 }
 
@@ -94,10 +105,8 @@ export default function Reservation() {
           releasedAt={data.releasedAt}
         />
       );
-    case 'confirmed':
-      return (
-        <ReservationConfirmed reservation={reservation} />
-      )
+    case "confirmed":
+      return <ReservationConfirmed reservation={reservation} />;
     default:
       // TODO: confirmed, etc
       return null;

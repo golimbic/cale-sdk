@@ -3,6 +3,7 @@ import { Label } from "@radix-ui/react-label";
 import { Form, Link, useSubmit } from "@remix-run/react";
 import { formatDistanceToNow } from "date-fns";
 import { useEffect, useState } from "react";
+import { ConfettiButton } from "~/components/magicui/confetti";
 import { Button } from "~/components/ui/button";
 import {
   Card,
@@ -112,9 +113,9 @@ export default function ReservationHold(data: {
             <Label htmlFor="phone">Phone</Label>
             <Input placeholder="Phone" name="phone" id="phone" />
           </div>
-          <Button type="submit" className="w-full mt-4">
+          <ConfettiButton type="submit" className="w-full mt-4">
             Confirm Reservation
-          </Button>
+          </ConfettiButton>
         </Form>
       </CardContent>
     </Card>

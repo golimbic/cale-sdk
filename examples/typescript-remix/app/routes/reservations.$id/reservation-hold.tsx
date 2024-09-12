@@ -30,7 +30,7 @@ export default function ReservationHold(data: {
       setReleaseTime(formatDistanceToNow(data.releasedAt));
       setExpired(new Date() > new Date(data.releasedAt));
     }, 10000);
-  }, []);
+  }, [data.releasedAt]);
 
   const submit = useSubmit();
 
@@ -41,7 +41,7 @@ export default function ReservationHold(data: {
         { method: "delete", encType: "application/json" }
       );
     }
-  }, [expired]);
+  }, [expired, submit, data.reservation.id]);
 
   if (expired) {
     return (
@@ -103,7 +103,7 @@ export default function ReservationHold(data: {
         <Form method="post" className="grid gap-4 mt-8">
           <div className="grid gap-1">
             <Label htmlFor="name">Name</Label>
-            <Input placeholder="Name" autoFocus name="name" id="name" />
+            <Input placeholder="Name" name="name" id="name" />
           </div>
           <div className="grid gap-1">
             <Label htmlFor="email">Email</Label>

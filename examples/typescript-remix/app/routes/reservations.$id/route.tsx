@@ -5,11 +5,7 @@ import { add } from "date-fns";
 import { z } from "zod";
 import { api } from "~/api.server";
 import ReservationHold from "./reservation-hold";
-import {
-  ReservationFromJSON,
-  ReservationFromJSONTyped,
-  ReservationToJSON,
-} from "@cale-app/sdk";
+import { ReservationFromJSON, ReservationToJSON } from "@cale-app/sdk";
 import ReservationConfirmed from "./reservation-confirmed";
 
 export async function loader({ params }: LoaderFunctionArgs) {

@@ -1,10 +1,8 @@
 import { Reservation } from "@cale-app/sdk";
 import { Label } from "@radix-ui/react-label";
-import { Form, Link, useSubmit } from "@remix-run/react";
+import { Form, useRevalidator } from "@remix-run/react";
 import { formatDistanceToNow } from "date-fns";
-import { useEffect, useState } from "react";
 import { ConfettiButton } from "~/components/magicui/confetti";
-import { Button } from "~/components/ui/button";
 import {
   Card,
   CardContent,
@@ -13,47 +11,21 @@ import {
   CardTitle,
 } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
+import { useInterval } from "~/lib/hooks";
 import { formatPrice } from "~/lib/utils";
 
 export default function ReservationHold(data: {
   reservation: Reservation;
   releasedAt: string;
 }) {
-  const [expired, setExpired] = useState(
-    new Date() > new Date(data.releasedAt)
-  );
-  const [releaseTime, setReleaseTime] = useState(
-    formatDistanceToNow(data.releasedAt)
-  );
-  useEffect(() => {
-    setTimeout(() => {
-      setReleaseTime(formatDistanceToNow(data.releasedAt));
-      setExpired(new Date() > new Date(data.releasedAt));
-    }, 10000);
-  }, [data.releasedAt]);
+  const releaseTime = formatDistanceToNow(data.releasedAt);
 
-  const submit = useSubmit();
-
-  useEffect(() => {
-    if (expired) {
-      submit(
-        { intent: "cancel", id: data.reservation.id },
-        { method: "delete", encType: "application/json" }
-      );
+  const revalidator = useRevalidator();
+  useInterval(() => {
+    if (revalidator.state === "idle") {
+      revalidator.revalidate();
     }
-  }, [expired, submit, data.reservation.id]);
-
-  if (expired) {
-    return (
-      <div>
-        <h1 className="text-lg">Reservation</h1>
-        <p className="my-4">Your reservation has expired.</p>
-        <Button asChild>
-          <Link to="/">Start over</Link>
-        </Button>
-      </div>
-    );
-  }
+  }, 30_000);
 
   return (
     <Card>

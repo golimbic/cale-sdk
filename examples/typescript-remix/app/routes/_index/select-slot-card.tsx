@@ -1,4 +1,4 @@
-import { Form, useSearchParams } from "@remix-run/react";
+import { Form, useRevalidator, useSearchParams } from "@remix-run/react";
 import { z } from "zod";
 import { Button } from "~/components/ui/button";
 import {
@@ -16,6 +16,7 @@ import { parseWithZod } from "@conform-to/zod";
 import { SlotsPayload } from "@cale-app/sdk";
 import { Calendar } from "~/components/ui/calendar";
 import { add } from "date-fns";
+import { useInterval } from "~/lib/hooks";
 
 export const schema = z.object({
   offerId: z.string(),
@@ -48,6 +49,13 @@ export default function SelectOfferCard({ data }: { data: SlotsPayload }) {
   const endValue = time.value
     ? add(time.value, { minutes: data.duration }).toISOString()
     : "";
+
+  const revalidator = useRevalidator();
+  useInterval(() => {
+    if (revalidator.state === "idle") {
+      revalidator.revalidate();
+    }
+  }, 10_000);
 
   return (
     <Card className="mt-10">

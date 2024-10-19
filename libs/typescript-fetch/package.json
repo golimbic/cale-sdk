@@ -1,6 +1,6 @@
 {
   "name": "@cale-app/sdk",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "OpenAPI client for @cale-app/sdk",
   "author": "OpenAPI-Generator",
   "repository": {

@@ -31,13 +31,13 @@ export interface ProviderUpdateChangeset {
      * @type {string}
      * @memberof ProviderUpdateChangeset
      */
-    name?: string | null;
+    name: string;
     /**
      * 
      * @type {Status}
      * @memberof ProviderUpdateChangeset
      */
-    status?: Status | null;
+    status: Status;
 }
 
 
@@ -46,6 +46,8 @@ export interface ProviderUpdateChangeset {
  * Check if a given object implements the ProviderUpdateChangeset interface.
  */
 export function instanceOfProviderUpdateChangeset(value: object): value is ProviderUpdateChangeset {
+    if (!('name' in value) || value['name'] === undefined) return false;
+    if (!('status' in value) || value['status'] === undefined) return false;
     return true;
 }
 
@@ -59,8 +61,8 @@ export function ProviderUpdateChangesetFromJSONTyped(json: any, ignoreDiscrimina
     }
     return {
         
-        'name': json['name'] == null ? undefined : json['name'],
-        'status': json['status'] == null ? undefined : StatusFromJSON(json['status']),
+        'name': json['name'],
+        'status': StatusFromJSON(json['status']),
     };
 }
 

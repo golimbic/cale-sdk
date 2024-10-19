@@ -13,18 +13,18 @@
  */
 
 import { mapValues } from '../runtime';
+import type { Status } from './Status';
+import {
+    StatusFromJSON,
+    StatusFromJSONTyped,
+    StatusToJSON,
+} from './Status';
 import type { Price } from './Price';
 import {
     PriceFromJSON,
     PriceFromJSONTyped,
     PriceToJSON,
 } from './Price';
-import type { ReservationStatus } from './ReservationStatus';
-import {
-    ReservationStatusFromJSON,
-    ReservationStatusFromJSONTyped,
-    ReservationStatusToJSON,
-} from './ReservationStatus';
 
 /**
  * 
@@ -70,10 +70,10 @@ export interface Reservation {
     startTime: Date;
     /**
      * 
-     * @type {ReservationStatus}
+     * @type {Status}
      * @memberof Reservation
      */
-    status: ReservationStatus;
+    status: Status;
     /**
      * 
      * @type {Price}
@@ -121,7 +121,7 @@ export function ReservationFromJSONTyped(json: any, ignoreDiscriminator: boolean
         'id': json['id'],
         'offerId': json['offer_id'],
         'startTime': (new Date(json['start_time'])),
-        'status': ReservationStatusFromJSON(json['status']),
+        'status': StatusFromJSON(json['status']),
         'totalPrice': PriceFromJSON(json['total_price']),
         'updatedAt': (new Date(json['updated_at'])),
     };
@@ -139,7 +139,7 @@ export function ReservationToJSON(value?: Reservation | null): any {
         'id': value['id'],
         'offer_id': value['offerId'],
         'start_time': ((value['startTime']).toISOString()),
-        'status': ReservationStatusToJSON(value['status']),
+        'status': StatusToJSON(value['status']),
         'total_price': PriceToJSON(value['totalPrice']),
         'updated_at': ((value['updatedAt']).toISOString()),
     };

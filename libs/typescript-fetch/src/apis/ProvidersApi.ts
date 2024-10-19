@@ -50,7 +50,7 @@ export class ProvidersApi extends runtime.BaseAPI {
      * Create a new provider
      * Create a provider
      */
-    async createProviderRaw(requestParameters: CreateProviderRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<Provider>>> {
+    async createProviderRaw(requestParameters: CreateProviderRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Provider>> {
         if (requestParameters['providerCreateChangeset'] == null) {
             throw new runtime.RequiredError(
                 'providerCreateChangeset',
@@ -76,14 +76,14 @@ export class ProvidersApi extends runtime.BaseAPI {
             body: ProviderCreateChangesetToJSON(requestParameters['providerCreateChangeset']),
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(ProviderFromJSON));
+        return new runtime.JSONApiResponse(response, (jsonValue) => ProviderFromJSON(jsonValue));
     }
 
     /**
      * Create a new provider
      * Create a provider
      */
-    async createProvider(requestParameters: CreateProviderRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Provider>> {
+    async createProvider(requestParameters: CreateProviderRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Provider> {
         const response = await this.createProviderRaw(requestParameters, initOverrides);
         return await response.value();
     }

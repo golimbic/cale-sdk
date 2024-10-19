@@ -20,13 +20,13 @@ import { mapValues } from '../runtime';
  */
 export interface Price {
     /**
-     * The amount in minor units
-     * @type {number}
+     * Decimal
+     * @type {string}
      * @memberof Price
      */
-    amount: number;
+    amount: string;
     /**
-     * The currency of the price
+     * Currency code
      * @type {string}
      * @memberof Price
      */

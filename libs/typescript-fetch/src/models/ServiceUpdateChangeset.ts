@@ -31,13 +31,13 @@ export interface ServiceUpdateChangeset {
      * @type {string}
      * @memberof ServiceUpdateChangeset
      */
-    name?: string | null;
+    name: string;
     /**
      * 
      * @type {Status}
      * @memberof ServiceUpdateChangeset
      */
-    status?: Status | null;
+    status: Status;
 }
 
 
@@ -46,6 +46,8 @@ export interface ServiceUpdateChangeset {
  * Check if a given object implements the ServiceUpdateChangeset interface.
  */
 export function instanceOfServiceUpdateChangeset(value: object): value is ServiceUpdateChangeset {
+    if (!('name' in value) || value['name'] === undefined) return false;
+    if (!('status' in value) || value['status'] === undefined) return false;
     return true;
 }
 
@@ -59,8 +61,8 @@ export function ServiceUpdateChangesetFromJSONTyped(json: any, ignoreDiscriminat
     }
     return {
         
-        'name': json['name'] == null ? undefined : json['name'],
-        'status': json['status'] == null ? undefined : StatusFromJSON(json['status']),
+        'name': json['name'],
+        'status': StatusFromJSON(json['status']),
     };
 }
 
